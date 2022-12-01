@@ -4,7 +4,7 @@ from typing import Optional
 from datetime import datetime, date
 import pytz
 import re
-import urllib.request
+import requests
 import shutil
 import os
 from subprocess import check_call, CalledProcessError
@@ -32,6 +32,10 @@ class Torrent(object):
             ENCODING_H265
             ENCODING_X264
             ENCODING_X265
+    
+        Methods:
+            downloadTorrent(destPath) Downloads the torrent to the directory specified.
+            openMagnet() Uses xdg-open to open the torrent magnet link in the preferred torrent client.
     """
 # Qualities:
     QUALITY_UNKNOWN: str = 'unknown'
@@ -125,20 +129,20 @@ class Torrent(object):
                     if success (returnValue[1]) == False response is an error message.
         """
         filePath = os.path.join(destPath, self.filename)
-    # Try to open the destination file:
-        try:
-            fileHandle = open(filePath, 'w')
-        except Exception as e:
-            errorMessage = "Failed to open '%s' for writing: %s" % (filePath, str(e.args))
-            return (False, errorMessage)
     # Try to open the torrent url:
         try:
-            response= urllib.request.urlopen(self.torrent)
+            response = requests.get(self.torrent)
         except Exception as e:
             errorMessage = "Failed to open url '%s': %s" % (self.torrent, str(e.args))
             return (False, errorMessage)
-    # Copy the data to the file:
-        shutil.copyfileobj(response, fileHandle)
+    # Try to open the destination file:
+        try:
+            fileHandle = open(filePath, 'wb')
+        except Exception as e:
+            errorMessage = "Failed to open '%s' for writing: %s" % (filePath, str(e.args))
+            return (False, errorMessage)
+    # Write the data to the file:
+        fileHandle.write(response.content)
         fileHandle.close()
         return (True, filePath)
     

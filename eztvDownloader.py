@@ -24,8 +24,12 @@ if __name__ == '__main__':
     
     for torrent in result:
         print(torrent.title)
-        if (torrent.title.find('Secret Nazi Expeditions') > -1):
+        if (torrent.title.find('Star Trek Strange New Worlds') > -1):
             if (torrent.quality == torrent.QUALITY_1080P):
-                print(torrent.magnet)
-                torrent.openMagnet()
+                print(torrent.title)
+                success, result = torrent.downloadTorrent("/home/streak/Documents/")
+                if (success == True):
+                    print("Downloaded to '%s'" % result)
+                else:
+                    print("Download Error: %s" % result)
     exit(0)
