@@ -18,10 +18,15 @@ class Configs(object):
         self.updateInterval: timedelta = timedelta(minutes=15)
         self.downloadPath:str
         try:
-            self.downloadPath = check_output(['xdg-user-dir', 'DOWNLOADS']).rstrip()
+            self.downloadPath = check_output(['xdg-user-dir', 'DOWNLOADS'], text=True).rstrip()
         except CalledProcessError:
             self.downloadPath = os.environ.get("HOME")
         self.downloadPremiere: bool = True
+        self.premiereMinQuality: int = Torrent.QUALITY_UNKNOWN
+        self.premiereMaxQuality: int = Torrent.QUALITY_ANY
+        self.downloadFirstSeason: bool = True
+        self.firstSeasonMinQuality: int = Torrent.QUALITY_UNKNOWN
+        self.firstSeasonMaxQuality: int = Torrent.QUALITY_ANY
         try:
             self.__load__()
         except RuntimeError:
@@ -39,6 +44,11 @@ class Configs(object):
             'updateInterval': self.updateInterval.total_seconds(),
             'downloadPath': self.downloadPath,
             'downloadPremiere': self.downloadPremiere,
+            'premiereMinQuality': self.premiereMinQuality,
+            'premiereMaxQuality': self.premiereMaxQuality,
+            'downloadFirstSeason': self.downloadFirstSeason,
+            'firstSeasonMinQuality': self.firstSeasonMinQuality,
+            'firstSeasonMaxQuality': self.firstSeasonMaxQuality,
         }
         for show in self.showList:
             configDict['showList'].append(show.__toDict__())
@@ -76,6 +86,11 @@ class Configs(object):
         self.updateInterval = timedelta(seconds=configDict['updateInterval'])
         self.downloadPath = configDict['downloadPath']
         self.downloadPremiere = configDict['downloadPremiere']
+        self.premiereMinQuality = configDict['premiereMinQuality']
+        self.premiereMaxQuality = configDict['premiereMaxQuality']
+        self.downloadFirstSeason = configDict['downloadFirstSeason']
+        self.firstSeasonMinQuality = configDict['firstSeasonMinQuality']
+        self.firstSeasonMaxQuality = configDict['firstSeasonMaxQuality']
         return
 ########################
 # Setters:
@@ -107,6 +122,50 @@ class Configs(object):
         self.__save__()
         return
 
+    def setPremiereQuality(self, __minValue:int, __maxValue:int) -> None:
+        if (isinstance(__minValue, int) == False):
+            __typeError__("minValue", "int", __minValue)
+        if (isinstance(__maxValue, int) == False):
+            __typeError__("maxValue", "int", __maxValue)
+        if (__minValue < Torrent.QUALITY_UNKNOWN or __minValue > Torrent.QUALITY_ANY):
+            errorMessage = "minValue must be in range %i -> %i" % (Torrent.QUALITY_UNKNOWN, Torrent.QUALITY_ANY)
+            raise ValueError(errorMessage)
+        if (__maxValue < Torrent.QUALITY_UNKNOWN or __maxValue > Torrent.QUALITY_ANY):
+            errorMessage = "maxValue must be in range %i -> %i" % (Torrent.QUALITY_UNKNOWN, Torrent.QUALITY_ANY)
+            raise ValueError(errorMessage)
+        if (__minValue > __maxValue):
+            errorMessage = "minValue must be less than or equal to maxValue."
+            raise ValueError(errorMessage)
+        self.premiereMinQuality = __minValue
+        self.premiereMaxQuality = __maxValue
+        self.__save__()
+        return
+    
+    def setDownloadFirstSeason(self, __value:bool) -> None:
+        if (isinstance(__value, bool) == False):
+            __typeError__("value", "bool", __value)
+        self.downloadFirstSeason = __value
+        self.__save__()
+        return
+    
+    def setFirstSeasonQuality(self, __minValue:int, __maxValue:int) -> None:
+        if (isinstance(__minValue, int) == False):
+            __typeError__("minValue", "int", __minValue)
+        if (isinstance(__maxValue, int) == False):
+            __typeError__("maxValue", "int", __maxValue)
+        if (__minValue < Torrent.QUALITY_UNKNOWN or __minValue > Torrent.QUALITY_ANY):
+            errorMessage = "minValue must be in range %i -> %i" % (Torrent.QUALITY_UNKNOWN, Torrent.QUALITY_ANY)
+            raise ValueError(errorMessage)
+        if (__maxValue < Torrent.QUALITY_UNKNOWN or __maxValue > Torrent.QUALITY_ANY):
+            errorMessage = "maxValue must be in range %i -> %i" % (Torrent.QUALITY_UNKNOWN, Torrent.QUALITY_ANY)
+            raise ValueError(errorMessage)
+        if (__minValue > __maxValue):
+            errorMessage = "minValue must be less than or equal to maxValue."
+            raise ValueError(errorMessage)
+        self.firstSeasonMinQuality = __minValue
+        self.firstSeasonMaxQuality = __maxValue
+        self.__save__()
+        return
 ###########################
 # Methods:
 ###########################

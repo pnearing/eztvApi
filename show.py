@@ -17,6 +17,9 @@ class Show(object):
         self.maxQuality: int = maxQuality
         self.lastSeason: int = 0
         self.lastEpisode: int = 0
+    # Parse from Dict:
+        if (fromDict != None):
+            self.__fromDict__(fromDict)
         return
     
 ##########################
@@ -31,3 +34,11 @@ class Show(object):
             'lastEpisode': self.lastEpisode,
         }
         return showDict
+    
+    def __fromDict__(self, fromDict:dict[str,object]) -> None:
+        self.name = fromDict['name']
+        self.minQuality = fromDict['minQuality']
+        self.maxQuality = fromDict['maxQuality']
+        self.lastSeason = fromDict['lastSeason']
+        self.lastEpisode = fromDict['lastEpisode']
+        return

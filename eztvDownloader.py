@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 
-import os
-import feedparser
-import re
-import requests
+import argparse
 
 from eztvAPI import EZTVApi
+from configs import Configs
 
-# apiUrl = 'https://eztv.re/api/get-torrents?limit=100&page=1'
-
-ezrssUrl = 'https://eztv.re/ezrss.xml'
+configFile = '.eztvDownloader'
 
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="EZTV torrent downloader.")
+
+# Load config:
+    configs = Configs(configFile)
 
     api = EZTVApi()
     success, result = api.getNew()
@@ -21,15 +21,6 @@ if __name__ == '__main__':
     if (success == False):
         print("ERROR: Failed to fetch torrents: %s" % result)
         exit(1)
-    
     for torrent in result:
-        # print(torrent.title)
-        if (torrent.title.find('Star Trek Strange New Worlds') > -1):
-            if (torrent.quality == torrent.QUALITY_1080P):
-                print(torrent.title)
-                success, result = torrent.downloadTorrent("/home/streak/Documents/")
-                if (success == True):
-                    print("Downloaded to '%s'" % result)
-                else:
-                    print("Download Error: %s" % result)
+        torrent.downloadSmallScreenshot("/home/streak/Doccuments/eztvApi/")
     exit(0)
