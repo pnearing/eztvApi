@@ -7,7 +7,7 @@ import re
 import requests
 import os
 from subprocess import check_call, CalledProcessError
-from common import MONTH_NUMBER_BY_LONG_NAME, MONTH_NUMBER_BY_SHORT_NAME
+from common import MONTH_NUMBER_BY_LONG_NAME, MONTH_NUMBER_BY_SHORT_NAME, __downloadFile__
 class Torrent(object):
     """
         Class to store a single torrent from EZTV.
@@ -82,8 +82,14 @@ class Torrent(object):
         self.imdbId: str = rawData['imdb_id']
         self.season: int = int(rawData['season'])
         self.episode: int = int(rawData['episode'])
-        self.smallScreenshot: str = "https:" + rawData['small_screenshot']
-        self.largeScreenshot: str = "https:" + rawData['large_screenshot']
+        if (rawData['small_screenshot'][:6] == 'https:'):
+            self.smallScreenshot = rawData['small_screenshot']
+        else:
+            self.smallScreenshot: str = "https:" + rawData['small_screenshot']
+        if (rawData['large_screenshot'][:6] == 'https:'):
+            self.largeScreenshot = rawData['large_screenshot']
+        else:
+            self.largeScreenshot: str = "https:" + rawData['large_screenshot']
         self.seeds: int = rawData['seeds']
         self.peers: int = rawData['peers']
         self.releaseDate = pytz.utc.localize(datetime.fromtimestamp(rawData['date_released_unix']))
@@ -204,33 +210,15 @@ class Torrent(object):
 ##################
 # Methods:
 ##################
-    def downloadTorrent(self, destPath:str) -> tuple[bool, str]:
+    def downloadTorrent(self, destPath:str) -> str:
         """
             Download the torrent file to the directory specified by destPath.
             @param: str, destPath, the directory to download the torrent to.
-            @return: tuple[bool, str]
-                returnValue[0], bool, success. True if the torrent was successfully downloaded. False if not.
-                returnValue[1], str, response.
-                    if success (returnValue[0]) == True response is the file path.
-                    if success (returnValue[1]) == False response is an error message.
+            @return: str, response. Path to the downloaded file
         """
         filePath = os.path.join(destPath, self.filename)
-    # Try to open the torrent url:
-        try:
-            response = requests.get(self.torrent)
-        except Exception as e:
-            errorMessage = "Failed to open url '%s': %s" % (self.torrent, str(e.args))
-            return (False, errorMessage)
-    # Try to open the destination file:
-        try:
-            fileHandle = open(filePath, 'wb')
-        except Exception as e:
-            errorMessage = "Failed to open '%s' for writing: %s" % (filePath, str(e.args))
-            return (False, errorMessage)
-    # Write the data to the file:
-        fileHandle.write(response.content)
-        fileHandle.close()
-        return (True, filePath)
+        __downloadFile__(self.torrent, filePath)
+        return filePath
     
     def openMagnet(self) -> bool:
         """
@@ -242,3 +230,25 @@ class Torrent(object):
         except CalledProcessError:
             return False
         return True
+    
+    def downloadSmallScreenshot(self, destPath) -> str:
+        """
+            Downloads a small screenshot of the torrent.
+            @param: str, destPath. Directory to save the screenshot in to.
+            @return: str, filePath. Complete path to the downloaded file.
+        """
+        fileName = self.smallScreenshot.split('/')[-1]
+        filePath = os.path.join(destPath, fileName)
+        __downloadFile__(self.smallScreenshot, filePath)
+        return filePath
+    
+    def downloadLargeScreenshot(self, destPath) -> str:
+        """
+            Downloads a large screenshot of the torrent.
+            @param: str, destPath. Directory to save the screenshot in to.
+            @return: str, filePath. Complete path to the downloaded file.
+        """
+        fileName = self.largeScreenshot.split('/')[-1]
+        filePath = os.path.join(destPath, fileName)
+        __downloadFile__(self.largeScreenshot, filePath)
+        return filePath
