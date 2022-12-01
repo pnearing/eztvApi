@@ -82,10 +82,14 @@ class Torrent(object):
         self.imdbId: str = rawData['imdb_id']
         self.season: int = int(rawData['season'])
         self.episode: int = int(rawData['episode'])
-        if (rawData['small_screenshot'][:6] == 'https:'):
+        if (rawData['small_screenshot'] == ''):
+            self.smallScreenshot = None
+        elif (rawData['small_screenshot'][:6] == 'https:'):
             self.smallScreenshot = rawData['small_screenshot']
         else:
             self.smallScreenshot: str = "https:" + rawData['small_screenshot']
+        if (rawData['large_screenshot'] == ''):
+            self.largeScreenshot = None
         if (rawData['large_screenshot'][:6] == 'https:'):
             self.largeScreenshot = rawData['large_screenshot']
         else:
@@ -235,8 +239,10 @@ class Torrent(object):
         """
             Downloads a small screenshot of the torrent.
             @param: str, destPath. Directory to save the screenshot in to.
-            @return: str, filePath. Complete path to the downloaded file.
+            @return: str, filePath. Complete path to the downloaded file, or "<NO-SCREENSHOT>" if unavailable.
         """
+        if (self.smallScreenshot == None):
+            return "<NO-SCREENSHOT>"
         fileName = self.smallScreenshot.split('/')[-1]
         filePath = os.path.join(destPath, fileName)
         __downloadFile__(self.smallScreenshot, filePath)
@@ -246,8 +252,10 @@ class Torrent(object):
         """
             Downloads a large screenshot of the torrent.
             @param: str, destPath. Directory to save the screenshot in to.
-            @return: str, filePath. Complete path to the downloaded file.
+            @return: str, filePath. Complete path to the downloaded file, or "<NO-SCREENSHOT>" if unavailable.
         """
+        if (self.largeScreenshot == None):
+            return "<NO-SCREENSHOT>"
         fileName = self.largeScreenshot.split('/')[-1]
         filePath = os.path.join(destPath, fileName)
         __downloadFile__(self.largeScreenshot, filePath)
