@@ -7,7 +7,7 @@ Usage example can be found in eztvDownloader.py
 
 Basic Usage
 -----------
-.. code-block:: python
+..code-block:: python
     from eztvApi import eztvApi
     api = EZTVApi()
     success, results = api.getTorrents()
@@ -15,4 +15,4 @@ Basic Usage
         print("ERROR: %s" % results)
     for torrent in results:
         print(torrent.title)
-    
+
