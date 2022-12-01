@@ -22,4 +22,10 @@ if __name__ == '__main__':
         print("ERROR: Failed to fetch torrents: %s" % result)
         exit(1)
     
+    for torrent in result:
+        print(torrent.title)
+        if (torrent.title.find('Secret Nazi Expeditions') > -1):
+            if (torrent.quality == torrent.QUALITY_1080P):
+                print(torrent.magnet)
+                torrent.openMagnet()
     exit(0)
