@@ -53,7 +53,22 @@ class Torrent(object):
     ENCODING_X264: str = 'x264'
     ENCODING_X265: str = 'x265'
 
-    def __init__(self, rawData:dict[str,object]):
+    def __init__(self,
+                    rawData: Optional[dict[str,object]] = None,
+                    fromDict: Optional[dict[str, object]] = None,
+                ) -> None:
+        if (rawData != None):
+            self.__fromRawData__(rawData)
+        elif (fromDict != None):
+            self.__fromDict__(fromDict)
+        else:
+            errorMessage = "Either rawData or fromDict must be defined."
+            raise RuntimeError(errorMessage)
+        return
+##################
+# Init:
+##################
+    def __fromRawData__(self, rawData: dict[str, object]) -> None:
 # Parse and store raw data:
         self.id: int = rawData['id']
         self.hash: str = rawData['hash']
@@ -132,6 +147,57 @@ class Torrent(object):
             self.isPremiere = True
         return
 
+##################
+# To / From Dict:
+##################
+    def __toDict__(self) -> dict[str, object]:
+        torrentDict = {
+            'id': self.id,
+            'hash': self.hash,
+            'filename': self.filename,
+            'title': self.title,
+            'episodeLink': self.episodeLink,
+            'torrent': self.torrent,
+            'magnet': self.magnet,
+            'imdbId': self.imdbId,
+            'season': self.season,
+            'episode': self.episode,
+            'smallScreenshot': self.smallScreenshot,
+            'largeScreenshot': self.largeScreenshot,
+            'seeds': self.seeds,
+            'peers': self.peers,
+            'releaseDate': self.releaseDate.timestamp(),
+            'size': self.size,
+            'isSeason': self.isSeason,
+            'quality': self.quality,
+            'encoding': self.encoding,
+            'airedDate': self.airedDate.isoformat(),
+            'isPremiere': self.isPremiere,
+        }
+        return torrentDict
+
+    def __fromDict__(self, fromDict:dict[str, object]) -> None:
+        self.id = fromDict['id']
+        self.hash = fromDict['hash']
+        self.filename = fromDict['filename']
+        self.title = fromDict['title']
+        self.episodeLink = fromDict['episodeLink']
+        self.torrent = fromDict['torrent']
+        self.magnet = fromDict['magnet']
+        self.imdbId = fromDict['imdbId']
+        self.season = fromDict['season']
+        self.episode = fromDict['episode']
+        self.smallScreenshot = fromDict['smallScreenshot']
+        self.largeScreenshot = fromDict['largeScreenshot']
+        self.seeds = fromDict['seeds']
+        self.peers = fromDict['peers']
+        self.releaseDate = pytz.utc.localize(datetime.fromtimestamp(fromDict['releaseDate']))
+        self.size = fromDict['size']
+        self.isSeason = fromDict['isSeason']
+        self.quality = fromDict['quality']
+        self.encoding = fromDict['encoding']
+        self.airedDate = date.fromisoformat(fromDict['airedDate'])
+        self.isPremiere = fromDict['isPremiere']
 ##################
 # Methods:
 ##################
