@@ -23,7 +23,7 @@ if __name__ == '__main__':
         exit(1)
     
     for torrent in result:
-        print(torrent.title)
+        # print(torrent.title)
         if (torrent.title.find('Star Trek Strange New Worlds') > -1):
             if (torrent.quality == torrent.QUALITY_1080P):
                 print(torrent.title)

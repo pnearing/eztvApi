@@ -5,10 +5,9 @@ from datetime import datetime, date
 import pytz
 import re
 import requests
-import shutil
 import os
 from subprocess import check_call, CalledProcessError
-
+from common import MONTH_NUMBER_BY_LONG_NAME, MONTH_NUMBER_BY_SHORT_NAME
 class Torrent(object):
     """
         Class to store a single torrent from EZTV.
@@ -109,10 +108,24 @@ class Torrent(object):
 # Parse title for aired date
         self.airedDate: Optional[date] = None
         if (self.episode == 0 and self.season == 0):
-            airedDateRegex = re.compile(r'(?P<year>2\d{3}) (?P<month>\d+) (?P<day>\d+)')
-            airedDateMatch = airedDateRegex.match(self.title)
-            if (airedDateMatch != None):
-                self.airedDate = date(airedDateMatch['year'], airedDateMatch['month'], airedDateMatch['day'])
+            print(self.title)
+            airedDateYMDMatch = re.match(r'^.*(?P<year>\d{4}) (?P<month>\d+) (?P<day>\d+).*$', self.title )
+            airedDateDMYMatch = re.match(r'^.* (?P<day>\d+)(th|st)? (?P<month>\w+) (?P<year>\d{4})', self.title)
+            if (airedDateYMDMatch != None):
+                self.airedDate = date(int(airedDateYMDMatch['year']), int(airedDateYMDMatch['month']), int(airedDateYMDMatch['day']))
+            elif (airedDateDMYMatch != None):
+                if (airedDateDMYMatch['month'].lower() in MONTH_NUMBER_BY_SHORT_NAME.keys()):
+                    month = MONTH_NUMBER_BY_SHORT_NAME[airedDateDMYMatch['month'].lower()]
+                elif (airedDateDMYMatch['month'].lower() in MONTH_NUMBER_BY_LONG_NAME.keys()):
+                    month = MONTH_NUMBER_BY_LONG_NAME[airedDateDMYMatch['month'].lower()]
+                else:
+                    month = None
+                if (month == None):
+                    self.airedDate = None
+                else:
+                    print ("DEBUG: year=", airedDateDMYMatch['year'], " month=", month, ' day=', airedDateDMYMatch['day'])
+                    self.airedDate = date(int(airedDateDMYMatch['year']), month, int(airedDateDMYMatch['day']))
+            print("DEBUG: ", self.airedDate)
 # Parse season and episode for premiere:
         self.isPremiere: bool = False
         if (self.season == 1 and self.episode == 1):
