@@ -7,7 +7,7 @@ Usage example can be found in eztvDownloader.py
 
 Basic Usage
 -----------
-..code-block:: python
+.. code-block:: python
     from eztvApi import eztvApi
     api = EZTVApi()
     success, results = api.getTorrents()
@@ -16,3 +16,6 @@ Basic Usage
     for torrent in results:
         print(torrent.title)
 
+Credits:
+--------
+    Credits go to the folks over at EZTV for making this possible.
