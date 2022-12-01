@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from typing import Any, NoReturn
-
+import requests
 ################################
 # Type checking helper:
 ################################
@@ -26,3 +26,24 @@ MONTH_NUMBER_BY_SHORT_NAME: dict[str, int] = {
     "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6, "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11,
     "dec": 12
 }
+
+###############################
+# Helper funcitons:
+###############################
+def __downloadFile__(url:str, destFile:str) -> str:
+    # Try to open the torrent url:
+        try:
+            response = requests.get(url)
+        except Exception as e:
+            errorMessage = "Failed to open url '%s': %s" % (url, str(e.args))
+            raise RuntimeError(errorMessage)
+    # Try to open the destination file:
+        try:
+            fileHandle = open(destFile, 'wb')
+        except Exception as e:
+            errorMessage = "Failed to open '%s' for writing: %s" % (destFile, str(e.args))
+            raise RuntimeError(errorMessage)
+    # Write the data to the file:
+        fileHandle.write(response.content)
+        fileHandle.close()
+        return destFile
