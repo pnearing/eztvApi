@@ -37,14 +37,15 @@ class Torrent(object):
             openMagnet() Uses xdg-open to open the torrent magnet link in the preferred torrent client.
     """
 # Qualities:
-    QUALITY_UNKNOWN: str = 'unknown'
-    QUALITY_240P: str = '240p'
-    QUALITY_360P: str = '360p'
-    QUALITY_480P: str = '480p'
-    QUALITY_540P: str = '540p'
-    QUALITY_720P: str = '720p'
-    QUALITY_1080P: str = '1080p'
-    QUALITY_2160P: str = '2160p'
+    QUALITY_UNKNOWN: int = 0
+    QUALITY_240P: int = 1
+    QUALITY_360P: int = 2
+    QUALITY_480P: int = 3
+    QUALITY_540P: int = 4
+    QUALITY_720P: int = 5
+    QUALITY_1080P: int = 6
+    QUALITY_2160P: int = 7
+    QUALITY_ANY: int = 8
 # Encodings:
     ENCODING_UNKNOWN: str = 'unknown'
     ENCODING_XVID: str = 'xvid'
@@ -65,6 +66,7 @@ class Torrent(object):
             errorMessage = "Either rawData or fromDict must be defined."
             raise RuntimeError(errorMessage)
         return
+
 ##################
 # Init:
 ##################
@@ -138,13 +140,14 @@ class Torrent(object):
                 if (month == None):
                     self.airedDate = None
                 else:
-                    # print ("DEBUG: year=", airedDateDMYMatch['year'], " month=", month, ' day=', airedDateDMYMatch['day'])
                     self.airedDate = date(int(airedDateDMYMatch['year']), month, int(airedDateDMYMatch['day']))
-            # print("DEBUG: ", self.airedDate)
 # Parse season and episode for premiere:
         self.isPremiere: bool = False
         if (self.season == 1 and self.episode == 1):
             self.isPremiere = True
+# Parse title for show name:
+        print(rawData['title'])
+
         return
 
 ##################
