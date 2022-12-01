@@ -7,7 +7,6 @@ Usage example can be found in eztvDownloader.py
 
 Basic Usage
 -----------
-.. code-block:: python
     from eztvApi import eztvApi
     api = EZTVApi()
     success, results = api.getTorrents()
