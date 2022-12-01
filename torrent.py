@@ -113,6 +113,10 @@ class Torrent(object):
             airedDateMatch = airedDateRegex.match(self.title)
             if (airedDateMatch != None):
                 self.airedDate = date(airedDateMatch['year'], airedDateMatch['month'], airedDateMatch['day'])
+# Parse season and episode for premiere:
+        self.isPremiere: bool = False
+        if (self.season == 1 and self.episode == 1):
+            self.isPremiere = True
         return
 
 ##################
