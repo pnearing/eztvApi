@@ -123,9 +123,9 @@ class Torrent(object):
                 if (month == None):
                     self.airedDate = None
                 else:
-                    print ("DEBUG: year=", airedDateDMYMatch['year'], " month=", month, ' day=', airedDateDMYMatch['day'])
+                    # print ("DEBUG: year=", airedDateDMYMatch['year'], " month=", month, ' day=', airedDateDMYMatch['day'])
                     self.airedDate = date(int(airedDateDMYMatch['year']), month, int(airedDateDMYMatch['day']))
-            print("DEBUG: ", self.airedDate)
+            # print("DEBUG: ", self.airedDate)
 # Parse season and episode for premiere:
         self.isPremiere: bool = False
         if (self.season == 1 and self.episode == 1):
