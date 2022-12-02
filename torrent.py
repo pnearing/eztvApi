@@ -82,12 +82,14 @@ class Torrent(object):
         self.imdbId: str = rawData['imdb_id']
         self.season: int = int(rawData['season'])
         self.episode: int = int(rawData['episode'])
+        self.smallScreenshot: Optional[str]
         if (rawData['small_screenshot'] == ''):
             self.smallScreenshot = None
         elif (rawData['small_screenshot'][:6] == 'https:'):
             self.smallScreenshot = rawData['small_screenshot']
         else:
             self.smallScreenshot: str = "https:" + rawData['small_screenshot']
+        self.largeScreenshot: Optional[str]
         if (rawData['large_screenshot'] == ''):
             self.largeScreenshot = None
         if (rawData['large_screenshot'][:6] == 'https:'):
@@ -102,6 +104,10 @@ class Torrent(object):
         self.isSeason: bool = False
         if (self.season != 0 and self.episode == 0):
             self.isSeason = True
+# Check if this is a first season:
+        self.isFirstSeason: bool = False
+        if (self.isSeason == True and self.season == 1):
+            self.isFirstSeason == True
 # Parse title for quality:
         self.quality: str
         if (self.title.lower().find('2160p') > -1):
@@ -186,6 +192,7 @@ class Torrent(object):
             'encoding': self.encoding,
             'airedDate': self.airedDate.isoformat(),
             'isPremiere': self.isPremiere,
+            'isFirstSeason': self.isFirstSeason,
         }
         return torrentDict
 
@@ -211,6 +218,9 @@ class Torrent(object):
         self.encoding = fromDict['encoding']
         self.airedDate = date.fromisoformat(fromDict['airedDate'])
         self.isPremiere = fromDict['isPremiere']
+        self.isFirstSeason = fromDict['isFirstSeason']
+        return
+        
 ##################
 # Methods:
 ##################
@@ -235,27 +245,27 @@ class Torrent(object):
             return False
         return True
     
-    def downloadSmallScreenshot(self, destPath) -> str:
+    def downloadSmallScreenshot(self, destPath) -> Optional[str]:
         """
             Downloads a small screenshot of the torrent.
             @param: str, destPath. Directory to save the screenshot in to.
-            @return: str, filePath. Complete path to the downloaded file, or "<NO-SCREENSHOT>" if unavailable.
+            @return: str, filePath. Complete path to the downloaded file, or None if unavailable.
         """
         if (self.smallScreenshot == None):
-            return "<NO-SCREENSHOT>"
+            return None
         fileName = self.smallScreenshot.split('/')[-1]
         filePath = os.path.join(destPath, fileName)
         __downloadFile__(self.smallScreenshot, filePath)
         return filePath
     
-    def downloadLargeScreenshot(self, destPath) -> str:
+    def downloadLargeScreenshot(self, destPath) -> Optional[str]:
         """
             Downloads a large screenshot of the torrent.
             @param: str, destPath. Directory to save the screenshot in to.
-            @return: str, filePath. Complete path to the downloaded file, or "<NO-SCREENSHOT>" if unavailable.
+            @return: str, filePath. Complete path to the downloaded file, or None if unavailable.
         """
         if (self.largeScreenshot == None):
-            return "<NO-SCREENSHOT>"
+            return None
         fileName = self.largeScreenshot.split('/')[-1]
         filePath = os.path.join(destPath, fileName)
         __downloadFile__(self.largeScreenshot, filePath)
