@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
-from typing import Optional
+from typing import TypeVar, Optional, Any
 from datetime import datetime, date
 import pytz
 import re
-import requests
 import os
 from subprocess import check_call, CalledProcessError
 from common import MONTH_NUMBER_BY_LONG_NAME, MONTH_NUMBER_BY_SHORT_NAME, __downloadFile__
+
+Self = TypeVar("Self", bound="Torrent")
+
 class Torrent(object):
     """
         Class to store a single torrent from EZTV.
@@ -165,7 +167,7 @@ class Torrent(object):
             self.isPremiere = True
 # Parse title for show name:
         showNameMatch = self.SHOW_NAME_REGEX.match(self.title)
-        self.name = showNameMatch['name']
+        self.name = showNameMatch['name']        # print(rawData['title'])
         return
 
 ###################
@@ -283,3 +285,12 @@ class Torrent(object):
         filePath = os.path.join(destPath, fileName)
         __downloadFile__(self.largeScreenshot, filePath)
         return filePath
+
+    def compare(self, __o:Self) -> bool:
+        if (isinstance(__o, Torrent) == False):
+            return False
+        if (self.name == __o.name):
+            if (self.season == __o.season):
+                if (self.episode == __o.episode):
+                    return True
+        return False
