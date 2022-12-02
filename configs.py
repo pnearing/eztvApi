@@ -52,7 +52,7 @@ class Configs(object):
         }
         for show in self.showList:
             configDict['showList'].append(show.__toDict__())
-        jsonConfigs = json.dumps(configDict)
+        jsonConfigs = json.dumps(configDict, indent=4)
     # Try to open the file:
         try:
             fileHandle = open(self._filePath, 'w')

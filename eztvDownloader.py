@@ -22,6 +22,16 @@ if __name__ == '__main__':
         print("ERROR: Failed to fetch torrents: %s" % result)
         exit(1)
     for torrent in result:
-        # torrent.downloadSmallScreenshot("/home/streak/Documents/eztvApi/")
+        for show in configs.showList:
+            if (torrent.name.find(show.name) > -1):
+                if (torrent.quality >= show.minQuality and torrent.quality <= show.maxQuality):
+                    torrent.downloadTorrent(configs.downloadPath)
+        if (configs.downloadPremiere == True and torrent.isPremiere == True):
+            if (torrent.quality >= configs.premiereMinQuality and torrent.quality <= configs.premiereMaxQuality):
+                torrent.downloadTorrent(configs.downloadPath)
+        elif (configs.downloadFirstSeason == True and torrent.isFirstSeason == True):
+            if (torrent.quality >= configs.firstSeasonMinQuality and torrent.quality <= configs.firstSeasonMaxQuality):
+                torrent.downloadTorrent(configs.downloadPath)
+
         pass
     exit(0)
