@@ -22,5 +22,6 @@ if __name__ == '__main__':
         print("ERROR: Failed to fetch torrents: %s" % result)
         exit(1)
     for torrent in result:
-        torrent.downloadSmallScreenshot("/home/streak/Doccuments/eztvApi/")
+        # torrent.downloadSmallScreenshot("/home/streak/Documents/eztvApi/")
+        pass
     exit(0)
