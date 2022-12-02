@@ -6,7 +6,7 @@ import pytz
 import re
 import os
 from subprocess import check_call, CalledProcessError
-from common import MONTH_NUMBER_BY_LONG_NAME, MONTH_NUMBER_BY_SHORT_NAME, __downloadFile__
+from common import MONTH_NUMBER_BY_LONG_NAME, MONTH_NUMBER_BY_SHORT_NAME, __downloadFile__, __typeError__
 
 Self = TypeVar("Self", bound="Torrent")
 
@@ -167,7 +167,7 @@ class Torrent(object):
             self.isPremiere = True
 # Parse title for show name:
         showNameMatch = self.SHOW_NAME_REGEX.match(self.title)
-        self.name = showNameMatch['name']        # print(rawData['title'])
+        self.name = showNameMatch['name']
         return
 
 ###################
@@ -178,6 +178,18 @@ class Torrent(object):
             return True
         return False
 
+    def __lt__(self, __o:Self) -> bool:
+        if (isinstance(__o, Torrent) == False):
+            errorMessage = "Can only compare Torrent not %s" % str(type(__o))
+            raise TypeError(errorMessage)
+        return (self.quality < __o.quality)
+
+    def __gt__(self, __o:Self) -> bool:
+        if (isinstance(__o, Torrent) == False):
+            errorMessage = "Can only compare Torrent not %s" % str(type(__o))
+            raise TypeError(errorMessage)
+        return (self.quality > __o.quality)
+        
 ##################
 # To / From Dict:
 ##################
