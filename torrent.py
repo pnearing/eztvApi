@@ -162,8 +162,11 @@ class Torrent(object):
         if (self.season == 1 and self.episode == 1):
             self.isPremiere = True
 # Parse title for show name:
-        print(rawData['title'])
-
+        # print(rawData['title'])
+        showNameRegex = re.compile(r'^(?P<name>.+) ([Ss]\d+[Ee]\d+|\d{4} \d{2} \d{2}|\d+(th|st)? \w+ \d{4}|[Ss]\d+) .+$')
+        showNameMatch = showNameRegex.match(self.title)
+        # print(showNameMatch['name'])
+        self.name = showNameMatch['name']
         return
 
 ##################
@@ -193,6 +196,7 @@ class Torrent(object):
             'airedDate': self.airedDate.isoformat(),
             'isPremiere': self.isPremiere,
             'isFirstSeason': self.isFirstSeason,
+            'name': self.name,
         }
         return torrentDict
 
@@ -219,6 +223,7 @@ class Torrent(object):
         self.airedDate = date.fromisoformat(fromDict['airedDate'])
         self.isPremiere = fromDict['isPremiere']
         self.isFirstSeason = fromDict['isFirstSeason']
+        self.name = fromDict['name']
         return
         
 ##################
