@@ -235,7 +235,8 @@ class Torrent(object):
             @param: str, destPath, the directory to download the torrent to.
             @return: str, response. Path to the downloaded file
         """
-        filePath = os.path.join(destPath, self.filename)
+        fileName = self.torrent.split('/')[-1]
+        filePath = os.path.join(destPath, fileName)
         __downloadFile__(self.torrent, filePath)
         return filePath
     
