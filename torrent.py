@@ -54,6 +54,8 @@ class Torrent(object):
     ENCODING_X264: str = 'x264'
     ENCODING_X265: str = 'x265'
 
+    SHOW_NAME_REGEX = re.compile(r'^(?P<name>.+) ([Ss]\d+[Ee]\d+|\d{4} \d{2} \d{2}|\d+(th|st)? \w+ \d{4}|[Ss]\d+) .+$')
+
     def __init__(self,
                     rawData: Optional[dict[str,object]] = None,
                     fromDict: Optional[dict[str, object]] = None,
@@ -162,12 +164,17 @@ class Torrent(object):
         if (self.season == 1 and self.episode == 1):
             self.isPremiere = True
 # Parse title for show name:
-        # print(rawData['title'])
-        showNameRegex = re.compile(r'^(?P<name>.+) ([Ss]\d+[Ee]\d+|\d{4} \d{2} \d{2}|\d+(th|st)? \w+ \d{4}|[Ss]\d+) .+$')
-        showNameMatch = showNameRegex.match(self.title)
-        # print(showNameMatch['name'])
+        showNameMatch = self.SHOW_NAME_REGEX.match(self.title)
         self.name = showNameMatch['name']
         return
+
+###################
+# Overrides:
+###################
+    def __eq__(self, __o: object) -> bool:
+        if (isinstance(__o, Torrent) == True and __o.id == self.id):
+            return True
+        return False
 
 ##################
 # To / From Dict:
