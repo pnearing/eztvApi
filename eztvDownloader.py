@@ -25,13 +25,21 @@ if __name__ == '__main__':
         for show in configs.showList:
             if (torrent.name.find(show.name) > -1):
                 if (torrent.quality >= show.minQuality and torrent.quality <= show.maxQuality):
-                    torrent.downloadTorrent(configs.downloadPath)
+                    if (torrent not in configs.downloadedTorrents):
+                        torrent.downloadTorrent(configs.downloadPath)
+                        show.seen(torrent)
+                        configs.torrentDownloaded(torrent)
+
         if (configs.downloadPremiere == True and torrent.isPremiere == True):
             if (torrent.quality >= configs.premiereMinQuality and torrent.quality <= configs.premiereMaxQuality):
-                torrent.downloadTorrent(configs.downloadPath)
+                if (torrent not in configs.downloadedTorrents):
+                    torrent.downloadTorrent(configs.downloadPath)
+                    configs.torrentDownloaded(torrent)
         elif (configs.downloadFirstSeason == True and torrent.isFirstSeason == True):
             if (torrent.quality >= configs.firstSeasonMinQuality and torrent.quality <= configs.firstSeasonMaxQuality):
-                torrent.downloadTorrent(configs.downloadPath)
+                if (torrent not in configs.downloadedTorrents):
+                    torrent.downloadTorrent(configs.downloadPath)
+                    configs.torrentDownloaded(torrent)
 
-        pass
+
     exit(0)

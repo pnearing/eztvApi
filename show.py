@@ -42,3 +42,13 @@ class Show(object):
         self.lastSeason = fromDict['lastSeason']
         self.lastEpisode = fromDict['lastEpisode']
         return
+
+#####################
+# Helpers:
+#####################
+    def seen(self, torrent:Torrent):
+        if (self.lastSeason < torrent.season):
+            self.lastSeason = torrent.season
+        if (self.lastEpisode < torrent.episode):
+            self.lastEpisode = torrent.episode
+        return

@@ -27,6 +27,7 @@ class Configs(object):
         self.downloadFirstSeason: bool = True
         self.firstSeasonMinQuality: int = Torrent.QUALITY_UNKNOWN
         self.firstSeasonMaxQuality: int = Torrent.QUALITY_ANY
+        self.downloadedTorrents: list[Torrent] = []
         try:
             self.__load__()
         except RuntimeError:
@@ -49,9 +50,12 @@ class Configs(object):
             'downloadFirstSeason': self.downloadFirstSeason,
             'firstSeasonMinQuality': self.firstSeasonMinQuality,
             'firstSeasonMaxQuality': self.firstSeasonMaxQuality,
+            'downloadedTorrents': [],
         }
         for show in self.showList:
             configDict['showList'].append(show.__toDict__())
+        for torrent in self.downloadedTorrents:
+            configDict['downloadedTorrents'].append(torrent.__toDict__())
         jsonConfigs = json.dumps(configDict, indent=4)
     # Try to open the file:
         try:
@@ -164,6 +168,11 @@ class Configs(object):
             raise ValueError(errorMessage)
         self.firstSeasonMinQuality = __minValue
         self.firstSeasonMaxQuality = __maxValue
+        self.__save__()
+        return
+    
+    def torrentDownloaded(self, torrent:Torrent):
+        self.downloadedTorrents.append(torrent)
         self.__save__()
         return
 ###########################
