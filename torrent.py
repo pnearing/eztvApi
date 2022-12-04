@@ -37,6 +37,8 @@ class Torrent(object):
         Methods:
             downloadTorrent(destPath) Downloads the torrent to the directory specified.
             openMagnet() Uses xdg-open to open the torrent magnet link in the preferred torrent client.
+            downloadSmallScreenshot(destPath) Downloads small screenshot to the directory specified.
+            downloadLargeScreenshot(destPath) Downloads large screenshot to the directory specified.
     """
 # Qualities:
     QUALITY_UNKNOWN: int = 0
