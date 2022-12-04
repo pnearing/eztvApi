@@ -171,10 +171,15 @@ class Configs(object):
         self.__save__()
         return
     
-    def torrentDownloaded(self, torrent:Torrent):
+    def torrentDownloaded(self, torrent:Torrent) -> None:
         self.downloadedTorrents.append(torrent)
         self.__save__()
         return
+    
+    def showSeen(self, show:Show, torrent:Torrent) -> None:
+        show.seen(torrent)
+        self.__save__()
+        pass
 ###########################
 # Methods:
 ###########################

@@ -6,7 +6,7 @@ from torrent import Torrent
 
 class Show(object):
     def __init__(self,
-                    fromDict: Optional[dict[str, object]],
+                    fromDict: Optional[dict[str, object]] = None,
                     name: Optional[str] = '',
                     minQuality: Optional[int] = Torrent.QUALITY_UNKNOWN,
                     maxQuality: Optional[int] = Torrent.QUALITY_ANY,
