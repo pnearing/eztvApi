@@ -216,11 +216,13 @@ class Torrent(object):
             'isSeason': self.isSeason,
             'quality': self.quality,
             'encoding': self.encoding,
-            'airedDate': self.airedDate.isoformat(),
+            'airedDate': None,
             'isPremiere': self.isPremiere,
             'isFirstSeason': self.isFirstSeason,
             'name': self.name,
         }
+        if (self.airedDate != None):
+            torrentDict['airedDate'] = self.airedDate.__toDict__()
         return torrentDict
 
     def __fromDict__(self, fromDict:dict[str, object]) -> None:
@@ -243,7 +245,9 @@ class Torrent(object):
         self.isSeason = fromDict['isSeason']
         self.quality = fromDict['quality']
         self.encoding = fromDict['encoding']
-        self.airedDate = date.fromisoformat(fromDict['airedDate'])
+        self.airedDate = None
+        if (fromDict['airedDate'] != None):
+            self.airedDate = date.fromisoformat(fromDict['airedDate'])
         self.isPremiere = fromDict['isPremiere']
         self.isFirstSeason = fromDict['isFirstSeason']
         self.name = fromDict['name']
